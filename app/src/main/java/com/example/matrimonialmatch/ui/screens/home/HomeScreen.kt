@@ -101,21 +101,21 @@ fun HomeScreenPreview() {
     val dummyProfiles = listOf(
         UserProfile(
             id = "1",
-            name = "Adilson Pultrum",
+            name = "test",
             age = 56,
-            city = "Oudega gem",
-            state = "Smallingerlnd",
-            country = "Drenthe",
+            city = "Mumbai",
+            state = "mumbai",
+            country = "mumbai",
             imageUrl = "",
             matchScore = 85
         ),
         UserProfile(
             id = "2",
-            name = "Florence Gagné",
+            name = "test",
             age = 29,
-            city = "Paris",
-            state = "Île-de-France",
-            country = "France",
+            city = "mumbai",
+            state = "mumbai",
+            country = "mumbai",
             imageUrl = "",
             matchScore = 90
         )

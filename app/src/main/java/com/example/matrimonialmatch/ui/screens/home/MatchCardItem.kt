@@ -170,12 +170,12 @@ fun MatchCardPreview() {
     MatrimonialMatchTheme {
         val sampleProfile = UserProfile(
             id = "1",
-            name = "Adilson Pultrum",
+            name = "Test",
             age = 56,
-            city = "Oudega gem",
-            state = "SmallingerInd",
-            country = "Drenthe",
-            imageUrl = "https://randomuser.me/api/portraits/thumb/men/98.jpg"
+            city = "mumbai",
+            state = "mumbai",
+            country = "mumbai",
+            imageUrl = "test"
         )
         MatchCard(
             profile = sampleProfile,

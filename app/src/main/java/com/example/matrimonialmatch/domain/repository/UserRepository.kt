@@ -1,6 +1,5 @@
 package com.example.matrimonialmatch.domain.repository
 
-import com.example.matrimonialmatch.domain.model.MatchStatus
 import com.example.matrimonialmatch.domain.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 
