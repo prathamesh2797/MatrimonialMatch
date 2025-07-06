@@ -31,8 +31,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.matrimonialmatch.domain.model.MatchStatus
 import com.example.matrimonialmatch.domain.model.UserProfile
 import com.example.matrimonialmatch.ui.theme.MatrimonialMatchTheme
+
 
 @Composable
 fun MatchCard(
@@ -40,6 +42,10 @@ fun MatchCard(
     onAccept: (UserProfile) -> Unit,
     onDecline: (UserProfile) -> Unit
 ) {
+
+    val isAccepted = profile.status == MatchStatus.ACCEPTED
+    val isDeclined = profile.status == MatchStatus.DECLINED
+
     Card(
         modifier = Modifier
             .padding(12.dp)
@@ -66,12 +72,21 @@ fun MatchCard(
             Text(
                 text = profile.name,
                 style = MaterialTheme.typography.titleMedium.copy(
-                    color = Color(0xFF1E88E5), // Blue-ish
+                    color = Color(0xFF1E88E5),
                     fontWeight = FontWeight.Bold
                 )
             )
 
-            // Age + Location
+            // Match Score
+            Text(
+                text = "Match Score: ${profile.matchScore}%",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color(0xFF2E7D32), // Green tone
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+
+            // Age & Location
             Text(
                 text = "${profile.age}, ${profile.city}\n${profile.state}, ${profile.country}",
                 textAlign = TextAlign.Center,
@@ -90,10 +105,14 @@ fun MatchCard(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Decline",
-                        tint = Color(0xFF1E88E5),
+                        tint = if (isDeclined) Color.Red else Color(0xFF1E88E5),
                         modifier = Modifier
                             .size(40.dp)
-                            .border(2.dp, Color(0xFF1E88E5), CircleShape)
+                            .border(
+                                width = 2.dp,
+                                color = if (isDeclined) Color.Red else Color(0xFF1E88E5),
+                                shape = CircleShape
+                            )
                             .padding(8.dp)
                     )
                 }
@@ -101,10 +120,14 @@ fun MatchCard(
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Accept",
-                        tint = Color(0xFF1E88E5),
+                        tint = if (isAccepted) Color.Green else Color(0xFF1E88E5),
                         modifier = Modifier
                             .size(40.dp)
-                            .border(2.dp, Color(0xFF1E88E5), CircleShape)
+                            .border(
+                                width = 2.dp,
+                                color = if (isAccepted) Color.Green else Color(0xFF1E88E5),
+                                shape = CircleShape
+                            )
                             .padding(8.dp)
                     )
                 }

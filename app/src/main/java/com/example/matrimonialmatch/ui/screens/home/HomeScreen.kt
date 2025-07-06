@@ -4,15 +4,25 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,9 +31,46 @@ import com.example.matrimonialmatch.ui.state.UiState
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
-    val state by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val listState = rememberLazyListState()
+    var lastScrollOffset by remember { mutableIntStateOf(0) }
 
-    when (state) {
+    when (uiState) {
+        is UiState.Success -> {
+            val profiles = (uiState as UiState.Success).profiles
+
+            LaunchedEffect(listState) {
+                snapshotFlow { listState.firstVisibleItemScrollOffset }
+                    .collect { currentOffset ->
+                        val layoutInfo = listState.layoutInfo
+                        val totalItems = layoutInfo.totalItemsCount
+                        val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+                        val isScrollingUp = currentOffset < lastScrollOffset
+                        lastScrollOffset = currentOffset
+
+                        val isAtBottom = lastVisibleIndex == totalItems - 1
+
+                        if (isScrollingUp && isAtBottom) {
+                            viewModel.loadMoreUsers()
+                        }
+                    }
+            }
+
+            LazyColumn(
+                state = listState,
+                contentPadding = PaddingValues(bottom = 16.dp)
+            ) {
+                items(profiles, key = { it.id }) { profile ->
+                    MatchCard(
+                        profile = profile,
+                        onAccept = { viewModel.acceptUser(it) },
+                        onDecline = { viewModel.declineUser(it) }
+                    )
+                }
+            }
+        }
+
         is UiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -32,37 +79,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 CircularProgressIndicator()
             }
         }
-        is UiState.Success -> {
-            val profiles = (state as UiState.Success).profiles
-
-            if (profiles.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No matches found!")
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(items = profiles, key = { it.id }) { profile ->
-                        MatchCard(
-                            profile = profile,
-                            onAccept = { viewModel.acceptUser(it) },
-                            onDecline = { viewModel.declineUser(it) }
-                        )
-                    }
-                }
-            }
-        }
-        is UiState.Error -> {
-            Text("Something went wrong...")
-        }
+        is UiState.Error -> Text("Something went wrong", color = Color.Red)
     }
 }
+
 
 /*
 @Preview(showBackground = true)

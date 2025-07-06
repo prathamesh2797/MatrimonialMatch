@@ -12,6 +12,8 @@ coil = "2.6.0"
 hilt-navigation-compose = "1.2.0"
 retrofit = "2.9.0"
 javapoet = "1.13.0"
+room = "2.7.2"
+
 
 
 [libraries]
@@ -37,6 +39,10 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 javapoet = { group = "com.squareup", name = "javapoet", version.ref = "javapoet" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

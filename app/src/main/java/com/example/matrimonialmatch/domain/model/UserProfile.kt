@@ -8,5 +8,6 @@ data class UserProfile(
     val state: String,
     val country: String,
     val imageUrl: String,
-    val matchScore: Int
+    val matchScore: Int = 0,
+    val status: MatchStatus = MatchStatus.NONE
 )
