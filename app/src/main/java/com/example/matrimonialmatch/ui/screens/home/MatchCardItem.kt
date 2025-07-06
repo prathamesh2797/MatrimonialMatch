@@ -1,7 +1,9 @@
 package com.example.matrimonialmatch.ui.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +36,7 @@ import coil.compose.AsyncImage
 import com.example.matrimonialmatch.domain.model.MatchStatus
 import com.example.matrimonialmatch.domain.model.UserProfile
 import com.example.matrimonialmatch.ui.theme.MatrimonialMatchTheme
+import com.example.matrimonialmatch.utils.AppConfig
 
 
 @Composable
@@ -58,13 +61,30 @@ fun MatchCard(
             modifier = Modifier.padding(16.dp)
         ) {
             // Image
-            AsyncImage(
-                model = profile.imageUrl,
-                contentDescription = profile.name,
-                modifier = Modifier.size(120.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
+            if (AppConfig.SHOW_PROFILE_IMAGES) {
+                AsyncImage(
+                    model = profile.imageUrl,
+                    contentDescription = profile.name,
+                    modifier = Modifier
+                        .size(140.dp)
+                        .clip(RoundedCornerShape(0.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(140.dp)
+                        .clip(RoundedCornerShape(0.dp))
+                        .background(Color(0xFFE0E0E0)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = profile.name.take(1).uppercase(),
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.DarkGray
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -89,6 +109,14 @@ fun MatchCard(
             // Age & Location
             Text(
                 text = "${profile.age}, ${profile.city}\n${profile.state}, ${profile.country}",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+
+            // Education + Religion
+            Text(
+                text = "${profile.education}, ${profile.religion}",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray

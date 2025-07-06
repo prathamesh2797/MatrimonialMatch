@@ -1,7 +1,7 @@
 package com.example.matrimonialmatch.ui.screens.home
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,24 +9,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.matrimonialmatch.domain.model.UserProfile
 import com.example.matrimonialmatch.ui.state.UiState
 
 @Composable
@@ -57,16 +55,28 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     }
             }
 
-            LazyColumn(
-                state = listState,
-                contentPadding = PaddingValues(bottom = 16.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
-                items(profiles, key = { it.id }) { profile ->
-                    MatchCard(
-                        profile = profile,
-                        onAccept = { viewModel.acceptUser(it) },
-                        onDecline = { viewModel.declineUser(it) }
-                    )
+                Text(
+                    text = "Profile Matches",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                LazyColumn(
+                    state = listState,
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    items(profiles, key = { it.id }) { profile ->
+                        MatchCard(
+                            profile = profile,
+                            onAccept = { viewModel.acceptUser(it) },
+                            onDecline = { viewModel.declineUser(it) }
+                        )
+                    }
                 }
             }
         }

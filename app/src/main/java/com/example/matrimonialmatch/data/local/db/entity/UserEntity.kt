@@ -14,5 +14,7 @@ data class UserEntity(
     val country: String,
     val imageUrl: String,
     val status: MatchStatus? = null,
-    val matchScore: Int
+    val matchScore: Int,
+    val education: String,
+    val religion: String
 )

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlinx.coroutines.flow.update
+import java.io.IOException
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -31,10 +32,39 @@ class HomeViewModel @Inject constructor(
     private val currentUserCity = "Saint-Pierre"
 
     init {
-        fetchProfiles()
+        //fetchProfiles()
+        fetchProfilesWithRetry(age = currentUserAge, city = currentUserCity)
     }
 
-    private fun fetchProfiles() {
+    private fun fetchProfilesWithRetry(age: Int, city: String) {
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+
+            var success = false
+
+            repeat(3) { attempt ->
+                try {
+                    repository.syncUsersFromApi(age, city)
+                    success = true
+                    return@repeat
+                } catch (e: IOException) {
+                    Log.e("HomeViewModel", "Retry ${attempt + 1} failed", e)
+                }
+            }
+
+            // Whether sync failed or succeeded, still observe Room DB
+            repository.getUsers().collectLatest { profiles ->
+                if (profiles.isNotEmpty()) {
+                    _uiState.value = UiState.Success(profiles)
+                } else if (!success) {
+                    _uiState.value = UiState.Error("Offline and no cached profiles available.")
+                }
+            }
+        }
+    }
+
+
+  /*  private fun fetchProfiles() {
         viewModelScope.launch {
             try {
                 repository.syncUsersFromApi(age = currentUserAge, city = currentUserCity) // Fetch from API and store in Room
@@ -46,7 +76,7 @@ class HomeViewModel @Inject constructor(
                 _uiState.value = UiState.Error("Failed to load profiles")
             }
         }
-    }
+    }*/
 
 
     fun loadMoreUsers() {

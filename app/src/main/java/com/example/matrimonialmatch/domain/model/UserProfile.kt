@@ -9,5 +9,7 @@ data class UserProfile(
     val country: String,
     val imageUrl: String,
     val matchScore: Int = 0,
-    val status: MatchStatus = MatchStatus.NONE
+    val status: MatchStatus = MatchStatus.NONE,
+    val education: String,
+    val religion: String
 )
